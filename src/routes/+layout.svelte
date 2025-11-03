@@ -114,12 +114,12 @@
 <svelte:head>
 	<title>{metadata.title}</title>
 	<meta name="description" content={metadata.description} />
-	<meta property="og:url" content="https://nullmask.xyz" />
+	<meta property="og:url" content="https://nullmask.io/" />
 	<meta property="og:title" content={metadata.title} />
 	<meta property="og:description" content={metadata.description} />
 	<meta property="og:image:url" content={metadata.thumbnail} />
-	<meta property="twitter:domain" content="nullmask.xyz" />
-	<meta property="twitter:url" content="https://nullmask.xyz" />
+	<meta property="twitter:domain" content="nullmask.io" />
+	<meta property="twitter:url" content="https://nullmask.io/" />
 	<meta property="twitter:card" content="summary_large_image" />
 	<meta property="twitter:image" content={metadata.thumbnail} />
 	<meta property="twitter:title" content={metadata.title} />
