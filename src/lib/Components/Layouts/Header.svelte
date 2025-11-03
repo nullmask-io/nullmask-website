@@ -63,19 +63,22 @@
 
 {#if $isMenuOpen}
 	<div
+		class="absolute inset-0 z-[10000] transition-colors duration-500"
+		class:bg-dark={$currentSection.theme === 'dark'}
+		class:bg-light={$currentSection.theme === 'light'}
+		in:fade={{ duration: 400 }}
+		out:fade={{ duration: 400 }}
+	></div>
+{/if}
+
+{#if $isMenuOpen}
+	<div
 		class=" fixed bottom-0 z-[10000] flex flex-col overflow-hidden px-4"
 		style="top: {$mediaQuery.md
 			? HEADER.height.desktop
 			: HEADER.height
 					.mobile}px; max-width: 1440px; left: 50%; transform: translateX(-50%); width: 100%;"
 	>
-		<div
-			class="absolute inset-0 transition-colors duration-500"
-			class:bg-dark={$currentSection.theme === 'dark'}
-			class:bg-light={$currentSection.theme === 'light'}
-			in:fade={{ duration: 400 }}
-			out:fade={{ duration: 400 }}
-		></div>
 		<div
 			class="relative z-[1] mb-4 flex flex-grow flex-col overflow-y-scroll rounded-b-[15px] border-x border-b transition-colors duration-500"
 			class:border-light={$currentSection.theme === 'dark'}
