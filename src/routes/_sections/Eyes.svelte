@@ -1,7 +1,7 @@
 <script>
 	import Eye from '$Components/AnimatedIcons/Eye/index.svelte'
 	import { mediaQuery } from '$lib/Stores/mediaQuery'
-	import { HEADER } from '$lib/const'
+	import { HEADER, SOCIALS } from '$lib/const'
 	import { cn } from '$utils'
 
 	export let className = ''
@@ -35,26 +35,36 @@
 				Freedom isn’t freedom if someone’s always watching.
 			</h2>
 
-			<p class="xs:text-base text-sm font-[300] md:mt-5 md:text-2xl">
+			<p class="xs:text-base text-sm font-[300] md:text-2xl">
 				We believe everyone deserves the right to act, speak, and transact without being watched.
 				Because privacy isn’t about hiding, it’s about having control. <br /> And in a truly free society,
 				control should belong to the individual.
 			</p>
 
+			<h3 class="text-green mt-2 text-center text-xl font-[400] md:mt-8 md:text-2xl">
+				NullMask is coming soon.
+			</h3>
+
 			<div
-				class="xs:grid-cols-2 xs:w-full s:text-lg s:gap-3 xs:mt-10 mt-4 grid gap-2 text-base md:grid-cols-1 lg:grid-cols-2 lg:text-xl xl:text-2xl"
+				class="xs:grid-cols-2 xs:w-full s:text-lg s:gap-3 mt-2 grid gap-2 text-base md:mt-4 md:grid-cols-1 lg:grid-cols-2 lg:text-xl xl:text-xl"
 			>
-				<button
-					class="border-light bg-dark text-light xs:w-full hover:bg-green hover:border-green hover:text-dark mx-auto w-[250px] rounded-[10px] border py-1.5 transition-all duration-300"
+				<a
+					href={SOCIALS.x}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="border-light bg-dark text-light xs:w-full hover:bg-green hover:border-green hover:text-dark mx-auto flex w-[250px] items-center justify-center rounded-[10px] border py-1.5 transition-all duration-300"
 				>
 					Join Our Community
-				</button>
+				</a>
 
-				<button
-					class="border-dark bg-light text-dark hover:bg-dark xs:w-full hover:text-green hover:border-green mx-auto w-[250px] rounded-[10px] border py-1.5 transition-all duration-300 duration-300"
+				<a
+					href={SOCIALS.email}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="border-dark bg-light text-dark hover:bg-dark xs:w-full hover:text-green hover:border-green mx-auto block flex w-[250px] items-center justify-center rounded-[10px] border py-1.5 transition-all duration-300 duration-300"
 				>
 					Business Inquiries
-				</button>
+				</a>
 			</div>
 		</div>
 	</div>

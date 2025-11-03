@@ -6,10 +6,14 @@
 	import { isMenuOpen, toggleMenu } from '$Stores/menuStore'
 	import { currentSection } from '$lib/Stores/currentSection'
 
-	import { HEADER } from '$lib/const'
+	import { HEADER, SOCIALS } from '$lib/const'
 	import Logo from '$Components/AnimatedIcons/Logo/index.svelte'
 	import Wordmark from '$Components/AnimatedIcons/Wordmark/Wordmark.svelte'
 	import { cn } from '$utils'
+	import XLogo from '$Components/AnimatedIcons/Socials/x-logo.svelte'
+	import TgLogo from '$Components/AnimatedIcons/Socials/tg-logo.svelte'
+	import Email from '$Components/AnimatedIcons/Socials/email.svelte'
+	import Nullmask from '$Components/AnimatedIcons/Socials/nullmask.svelte'
 </script>
 
 <header
@@ -23,7 +27,7 @@
 	<div
 		class={cn(
 			'flex h-full justify-between rounded-t-[15px]  border transition-all duration-500',
-			(!$isMenuOpen || mediaQuery.md) && 'rounded-b-[15px]'
+			!$isMenuOpen && 'rounded-b-[15px]'
 		)}
 		class:bg-dark={$currentSection.theme === 'dark'}
 		class:bg-light={$currentSection.theme === 'light'}
@@ -44,20 +48,20 @@
 			/>
 		</div>
 
-		{#if !$mediaQuery.md}
-			<MenuToggle
-				className="border-l flex items-center justify-center transition-colors duration-500 {$currentSection.theme ===
-				'light'
-					? 'border-light'
-					: 'border-dark'}"
-				theme={$currentSection.theme}
-				on:click={toggleMenu}
-			/>
-		{/if}
+		<!-- {#if !$mediaQuery.md} -->
+		<MenuToggle
+			className="border-l flex items-center justify-center transition-colors duration-500 {$currentSection.theme ===
+			'light'
+				? 'border-light'
+				: 'border-dark'}"
+			theme={$currentSection.theme}
+			on:click={toggleMenu}
+		/>
+		<!-- {/if} -->
 	</div>
 </header>
 
-{#if $isMenuOpen && !mediaQuery.md}
+{#if $isMenuOpen}
 	<div
 		class=" fixed bottom-0 z-[10000] flex flex-col overflow-hidden px-4"
 		style="top: {$mediaQuery.md
@@ -78,6 +82,103 @@
 			class:border-dark={$currentSection.theme === 'light'}
 			in:fly={{ y: '-100%', duration: 500, opacity: 0 }}
 			out:fly={{ y: '-100%', duration: 500, opacity: 0 }}
-		></div>
+		>
+			<div>
+				<div
+					target="_blank"
+					rel="noopener noreferrer"
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 cursor-not-allowed items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all  duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<Nullmask className="text-inherit h-6 w-6" />
+						<p class="">Use NullMask (Soon)</p>
+					</span>
+				</div>
+
+				<a
+					href={SOCIALS.x}
+					target="_blank"
+					rel="noopener noreferrer"
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all  duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<XLogo className="text-inherit h-6 w-6" />
+						<p>Join Our Community</p>
+					</span>
+				</a>
+
+				<a
+					href={SOCIALS.tg}
+					target="_blank"
+					rel="noopener noreferrer"
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all  duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<TgLogo className="text-inherit h-6 w-6" />
+						<p>Be the first to know</p>
+					</span>
+				</a>
+
+				<a
+					href={SOCIALS.email}
+					target="_blank"
+					rel="noopener noreferrer"
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<Email className="text-inherit h-6 w-6" />
+						<p>Business Inquiries</p>
+					</span>
+				</a>
+			</div>
+		</div>
 	</div>
 {/if}

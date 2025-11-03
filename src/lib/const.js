@@ -8,3 +8,11 @@ export const HEADER = {
 		mobile: 10
 	}
 }
+
+export const SOCIALS = {
+	x: 'https://x.com/NullMaskio',
+	tg: 'https://t.me/NullMask_io',
+	email: 'mailto:hello@nullmask.io'
+}
+
+export const NULLMASK_LINK = 'https://app.nullmask.io'

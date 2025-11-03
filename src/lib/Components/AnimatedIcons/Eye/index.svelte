@@ -10,8 +10,8 @@
 	// Different viewBox modes
 	const viewBoxes = [
 		{ x: 0, y: 0, width: 436, height: 536 }, //default
-		{ x: 50, y: 0, width: 286, height: 536 }, // default - full view
-		{ x: 50, y: 0, width: 286, height: 536 }
+		{ x: 65, y: 40, width: 386, height: 476 }, // s
+		{ x: 65, y: 40, width: 386, height: 476 }
 	]
 
 	$: {
@@ -40,7 +40,7 @@
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"
 	class={className}
-	preserveAspectRatio={viewMode == 0 ? 'xMidYMid meet' : 'xMinYMid meet'}
+	preserveAspectRatio={viewMode == 0 ? 'xMidYMid meet' : 'xMinYMin meet'}
 >
 	<path
 		d="M0 0L424.445 419.772C424.445 419.772 478.546 479.398 332.228 507.809C256.241 522.564 168.4 504.918 141.154 491.087C99.3486 473.873 97.1354 449.036 97.1354 449.036L0 0Z"

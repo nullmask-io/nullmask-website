@@ -1,7 +1,7 @@
 <script>
 	import OneClick from '$Components/AnimatedIcons/OneClick/index.svelte'
 	import { mediaQuery } from '$lib/Stores/mediaQuery'
-	import { HEADER } from '$lib/const'
+	import { HEADER, SOCIALS } from '$lib/const'
 	import { cn } from '$utils'
 
 	export let className = ''
@@ -31,11 +31,14 @@
 				Web3's First Wallet VPN
 			</p>
 
-			<button
-				class="bg-green hover:bg-dark border-dark hover:text-green mx-auto w-fit rounded-[10px] border px-4 py-2 text-xl font-[300] transition-all duration-300 md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
+			<a
+				href={SOCIALS.tg}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="bg-green hover:bg-dark border-dark hover:text-green mx-auto block w-fit rounded-[10px] border px-4 py-2 text-xl font-[300] transition-all duration-300 md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
 			>
 				Be the first to know
-			</button>
+			</a>
 		</div>
 
 		<div
