@@ -160,8 +160,6 @@
 
 				<a
 					href={SOCIALS.email}
-					target="_blank"
-					rel="noopener noreferrer"
 					class={cn(
 						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
 						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'

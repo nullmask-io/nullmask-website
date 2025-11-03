@@ -59,9 +59,7 @@
 
 				<a
 					href={SOCIALS.email}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="border-dark bg-light text-dark hover:bg-dark xs:w-full hover:text-green hover:border-green mx-auto block flex w-[250px] items-center justify-center rounded-[10px] border py-1.5 transition-all duration-300 duration-300"
+					class="border-dark bg-light text-dark hover:bg-dark xs:w-full hover:text-green hover:border-green mx-auto block flex w-[250px] items-center justify-center rounded-[10px] border py-1.5 transition-all duration-300"
 				>
 					Business Inquiries
 				</a>
