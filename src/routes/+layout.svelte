@@ -30,8 +30,8 @@
 	let resizeObserver
 
 	const metadata = {
-		title: 'Nullmask title',
-		description: `Nullmask descr.`,
+		title: 'Make any wallet and any transaction private — in one click.',
+		description: `NullMask is the first private VPN for crypto, enabling invisible and untraceable tokens and stablecoin transactions across any chain and wallet — total privacy for Web3. One click. Total privacy. Any wallet, any transaction.`,
 		thumbnail: '/thumbnail.webp'
 	}
 
