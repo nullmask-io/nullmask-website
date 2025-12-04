@@ -87,11 +87,12 @@
 			out:fly={{ y: '-100%', duration: 500, opacity: 0 }}
 		>
 			<div>
-				<div
+				<a
+					href="https://app.nullmask.io"
 					target="_blank"
 					rel="noopener noreferrer"
 					class={cn(
-						'border-border group relative flex h-14 flex-shrink-0 cursor-not-allowed items-center overflow-hidden border-b px-4 transition-all duration-500',
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
 						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
 					)}
 					class:border-light={$currentSection.theme === 'dark'}
@@ -106,9 +107,9 @@
 						)}
 					>
 						<Nullmask className="text-inherit h-6 w-6" />
-						<p class="">Use NullMask (Soon)</p>
+						<p class="">Use NullMask</p>
 					</span>
-				</div>
+				</a>
 
 				<a
 					href={SOCIALS.x}

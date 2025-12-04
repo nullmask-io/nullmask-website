@@ -41,12 +41,8 @@
 				control should belong to the individual.
 			</p>
 
-			<h3 class="text-green mt-2 text-center text-xl font-[400] md:mt-8 md:text-2xl">
-				NullMask is coming soon.
-			</h3>
-
 			<div
-				class="xs:grid-cols-2 xs:w-full s:text-lg s:gap-3 mt-2 grid gap-2 text-base md:mt-4 md:grid-cols-1 lg:grid-cols-2 lg:text-xl xl:text-xl"
+				class="xs:grid-cols-2 xs:w-full s:text-lg s:gap-3 mt-5 grid gap-2 text-base md:mt-8 md:grid-cols-1 lg:grid-cols-2 lg:text-xl xl:text-xl"
 			>
 				<a
 					href={SOCIALS.x}
