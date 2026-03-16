@@ -37,7 +37,7 @@
 				rel="noopener noreferrer"
 				class="bg-green hover:bg-dark border-dark hover:text-green mx-auto block w-fit rounded-[10px] border px-4 py-2 text-xl font-[300] transition-all duration-300 md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
 			>
-				Try NullMask now
+				Use Nullnask now!
 			</a>
 		</div>
 
