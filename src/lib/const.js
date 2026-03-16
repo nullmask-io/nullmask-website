@@ -11,7 +11,7 @@ export const HEADER = {
 
 export const SOCIALS = {
 	x: 'https://x.com/NullMaskio',
-	tg: 'https://t.me/NullMask_io',
+	tg: 'https://t.me/+suNrRakrTwA1OTVh',
 	email: 'mailto:hello@nullmask.io'
 }
 

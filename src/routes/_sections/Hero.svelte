@@ -1,7 +1,7 @@
 <script>
 	import OneClick from '$Components/AnimatedIcons/OneClick/index.svelte'
 	import { mediaQuery } from '$lib/Stores/mediaQuery'
-	import { HEADER, SOCIALS } from '$lib/const'
+	import { NULLMASK_LINK, HEADER, SOCIALS } from '$lib/const'
 	import { cn } from '$utils'
 
 	export let className = ''
@@ -28,16 +28,16 @@
 			<p
 				class=" mb-6 text-center text-xl uppercase md:text-left md:text-2xl lg:mb-6 xl:mb-8 xl:text-3xl"
 			>
-				Web3's First Wallet VPN
+				ZK privacy protocol for any<br>wallet, blockchain, or token
 			</p>
 
 			<a
-				href={SOCIALS.tg}
+				href={NULLMASK_LINK}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="bg-green hover:bg-dark border-dark hover:text-green mx-auto block w-fit rounded-[10px] border px-4 py-2 text-xl font-[300] transition-all duration-300 md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
 			>
-				Be the first to know
+				Try NullMask now
 			</a>
 		</div>
 

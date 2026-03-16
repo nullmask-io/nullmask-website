@@ -13,6 +13,7 @@
 	import XLogo from '$Components/AnimatedIcons/Socials/x-logo.svelte'
 	import TgLogo from '$Components/AnimatedIcons/Socials/tg-logo.svelte'
 	import Email from '$Components/AnimatedIcons/Socials/email.svelte'
+	import Article from '$Components/AnimatedIcons/Socials/article.svelte'
 	import Nullmask from '$Components/AnimatedIcons/Socials/nullmask.svelte'
 </script>
 
@@ -131,7 +132,7 @@
 						)}
 					>
 						<XLogo className="text-inherit h-6 w-6" />
-						<p>Join Our Community</p>
+						<p>Meet Our Community</p>
 					</span>
 				</a>
 
@@ -156,6 +157,28 @@
 					>
 						<TgLogo className="text-inherit h-6 w-6" />
 						<p>Be the first to know</p>
+					</span>
+				</a>
+
+				<a
+					href=https://hackmd.io/@krnak/Sy5zROAFWx
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<Article className="text-inherit h-6 w-6" />
+						<p>Articles</p>
 					</span>
 				</a>
 
