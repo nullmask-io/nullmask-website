@@ -156,7 +156,7 @@
 						)}
 					>
 						<TgLogo className="text-inherit h-6 w-6" />
-						<p>Be the first to know</p>
+						<p>Join our telegram</p>
 					</span>
 				</a>
 
