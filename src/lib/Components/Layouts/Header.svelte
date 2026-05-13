@@ -111,7 +111,27 @@
 						<p class="">Use NullMask</p>
 					</span>
 				</a>
-
+				<a
+					href=https://docs.nullmask.io
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<Article className="text-inherit h-6 w-6" />
+						<p>Docs</p>
+					</span>
+				</a>
 				<a
 					href={SOCIALS.x}
 					target="_blank"
