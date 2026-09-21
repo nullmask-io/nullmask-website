@@ -15,8 +15,7 @@
 	import Header from '$Layouts/Header.svelte'
 	import NavigationProgressBar from '$UI/NavigationProgressBar.svelte'
 
-	import Logo from '$Components/AnimatedIcons/Logo/index.svelte'
-	import Wordmark from '$Components/AnimatedIcons/Wordmark/Wordmark.svelte'
+	import Logo from '$Components/AnimatedIcons/Logo/Mark.svelte'
 
 	// import logo from '$Icons/qfLogos/logo-full.svg'
 
@@ -147,12 +146,7 @@
 			<source src="/loading.webm" type="video/webm" />
 			<source src="/loading.mp4" type="video/mp4" />
 		</video> -->
-		<Logo className="h-18 w-18 transition-all duration-500 lg:h-20 lg:w-20" theme="dark" />
-
-		<Wordmark
-			className="w-[240px] flex-shrink-0  transition-all duration-500 h-auto object-contain"
-			theme="dark"
-		/>
+		<Logo className="h-20 flex-shrink-0 lg:h-24" theme="dark" />
 	</div>
 {/if}
 
