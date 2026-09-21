@@ -7,7 +7,8 @@
 	import { currentSection } from '$lib/Stores/currentSection'
 
 	import { HEADER, SOCIALS } from '$lib/const'
-	import Logo from '$Components/AnimatedIcons/Logo/Mark.svelte'
+	import Logo from '$Components/AnimatedIcons/Logo/index.svelte'
+	import Wordmark from '$Components/AnimatedIcons/Wordmark/Wordmark.svelte'
 	import { cn } from '$utils'
 	import XLogo from '$Components/AnimatedIcons/Socials/x-logo.svelte'
 	import TgLogo from '$Components/AnimatedIcons/Socials/tg-logo.svelte'
@@ -35,12 +36,17 @@
 		class:border-dark={$currentSection.theme === 'light'}
 	>
 		<div class="items-cetner flex h-full flex-shrink-0 gap-2 md:gap-4">
-			<a href="/" class="flex items-center">
+			<a href="/" class="block flex items-center">
 				<Logo
-					className="ml-2 h-12 flex-shrink-0 md:ml-4 md:h-16"
+					className="h-12 w-12 transition-colors ml-2 md:ml-4 duration-500 md:h-16 md:w-16"
 					theme={$currentSection.theme}
 				/>
 			</a>
+
+			<Wordmark
+				className="md:w-[240px] w-[160px] flex-shrink-0  transition-colors duration-500 h-auto object-contain"
+				theme={$currentSection.theme}
+			/>
 		</div>
 
 		<!-- {#if !$mediaQuery.md} -->
@@ -82,10 +88,13 @@
 			out:fly={{ y: '-100%', duration: 500, opacity: 0 }}
 		>
 			<div>
-				<div
+				<a
+					href="https://app.nullmask.io"
+					target="_blank"
+					rel="noopener noreferrer"
 					class={cn(
-						'border-border relative flex h-14 flex-shrink-0 cursor-default select-none items-center overflow-hidden border-b px-4 transition-all duration-500',
-						$currentSection.theme === 'dark' ? 'bg-dark' : 'bg-light'
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
 					)}
 					class:border-light={$currentSection.theme === 'dark'}
 					class:border-dark={$currentSection.theme === 'light'}
@@ -93,13 +102,15 @@
 					<span
 						class={cn(
 							'relative z-10 flex items-center gap-2 transition-all  duration-500',
-							$currentSection.theme === 'dark' ? 'text-light' : 'text-dark'
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
 						)}
 					>
 						<Nullmask className="text-inherit h-6 w-6" />
-						<p class="">Beta closed. Launching soon</p>
+						<p class="">Use NullMask</p>
 					</span>
-				</div>
+				</a>
 				<a
 					href=https://docs.nullmask.io
 					class={cn(
