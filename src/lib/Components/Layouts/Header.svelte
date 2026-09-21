@@ -7,7 +7,7 @@
 	import { currentSection } from '$lib/Stores/currentSection'
 
 	import { HEADER, SOCIALS } from '$lib/const'
-	import Logo from '$Components/AnimatedIcons/Logo/index.svelte'
+	import Logo from '$Components/AnimatedIcons/Logo/Mark.svelte'
 	import Wordmark from '$Components/AnimatedIcons/Wordmark/Wordmark.svelte'
 	import { cn } from '$utils'
 	import XLogo from '$Components/AnimatedIcons/Socials/x-logo.svelte'
@@ -38,7 +38,7 @@
 		<div class="items-cetner flex h-full flex-shrink-0 gap-2 md:gap-4">
 			<a href="/" class="block flex items-center">
 				<Logo
-					className="h-12 w-12 transition-colors ml-2 md:ml-4 duration-500 md:h-16 md:w-16"
+					className="ml-2 h-12 flex-shrink-0 md:ml-4 md:h-16"
 					theme={$currentSection.theme}
 				/>
 			</a>
@@ -88,13 +88,10 @@
 			out:fly={{ y: '-100%', duration: 500, opacity: 0 }}
 		>
 			<div>
-				<a
-					href="https://app.nullmask.io"
-					target="_blank"
-					rel="noopener noreferrer"
+				<div
 					class={cn(
-						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
-						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+						'border-border relative flex h-14 flex-shrink-0 cursor-default select-none items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark' : 'bg-light'
 					)}
 					class:border-light={$currentSection.theme === 'dark'}
 					class:border-dark={$currentSection.theme === 'light'}
@@ -102,15 +99,13 @@
 					<span
 						class={cn(
 							'relative z-10 flex items-center gap-2 transition-all  duration-500',
-							$currentSection.theme === 'dark'
-								? 'text-light group-hover:text-dark'
-								: 'text-dark group-hover:text-light'
+							$currentSection.theme === 'dark' ? 'text-light' : 'text-dark'
 						)}
 					>
 						<Nullmask className="text-inherit h-6 w-6" />
-						<p class="">Use NullMask</p>
+						<p class="">Beta closed. Launching soon</p>
 					</span>
-				</a>
+				</div>
 				<a
 					href=https://docs.nullmask.io
 					class={cn(

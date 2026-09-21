@@ -1,7 +1,7 @@
 <script>
 	import OneClick from '$Components/AnimatedIcons/OneClick/index.svelte'
 	import { mediaQuery } from '$lib/Stores/mediaQuery'
-	import { NULLMASK_LINK, HEADER, SOCIALS } from '$lib/const'
+	import { HEADER, SOCIALS } from '$lib/const'
 	import { cn } from '$utils'
 
 	export let className = ''
@@ -31,14 +31,11 @@
 				ZK privacy protocol for any<br>wallet, blockchain, or token
 			</p>
 
-			<a
-				href={NULLMASK_LINK}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="bg-green hover:bg-dark border-dark hover:text-green mx-auto block w-fit rounded-[10px] border px-4 py-2 text-xl font-[300] transition-all duration-300 md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
+			<div
+				class="bg-green border-dark mx-auto block w-fit cursor-default select-none rounded-[10px] border px-4 py-2 text-xl font-[300] md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
 			>
-				Use Nullnask now!
-			</a>
+				Beta closed. Launching soon
+			</div>
 		</div>
 
 		<div
