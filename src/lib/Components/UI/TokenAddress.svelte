@@ -1,5 +1,5 @@
 <script>
-	import Nullmask from '$Components/AnimatedIcons/Socials/nullmask.svelte'
+	import Mark from '$Components/AnimatedIcons/Logo/Mark.svelte'
 	import { MASK_TOKEN } from '$lib/const'
 	import { cn } from '$utils'
 
@@ -34,7 +34,8 @@
 	)}
 >
 	<span class="flex flex-shrink-0 items-center gap-1.5 font-[500]">
-		<Nullmask className="text-dark h-5 w-5 md:h-6 md:w-6" />
+		<!-- The same mask mark as the header, so the token reads as ours at a glance -->
+		<Mark className="h-5 w-5 md:h-6 md:w-6" theme="light" />
 		{MASK_TOKEN.ticker}
 	</span>
 
