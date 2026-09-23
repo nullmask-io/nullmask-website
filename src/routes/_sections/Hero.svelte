@@ -1,5 +1,6 @@
 <script>
 	import OneClick from '$Components/AnimatedIcons/OneClick/index.svelte'
+	import TokenAddress from '$UI/TokenAddress.svelte'
 	import { mediaQuery } from '$lib/Stores/mediaQuery'
 	import { HEADER, SOCIALS } from '$lib/const'
 	import { cn } from '$utils'
@@ -11,7 +12,7 @@
 	data-section="hero"
 	data-theme="light"
 	id="landing-page"
-	class={cn('bg-light h-screen min-h-[600px] w-full overflow-hidden', className)}
+	class={cn('h-screen min-h-[600px] w-full overflow-hidden bg-light', className)}
 >
 	<div
 		class="relative mx-auto flex h-full max-w-[1440px] flex-col items-center md:flex-row"
@@ -28,13 +29,17 @@
 			<p
 				class=" mb-6 text-center text-xl uppercase md:text-left md:text-2xl lg:mb-6 xl:mb-8 xl:text-3xl"
 			>
-				ZK privacy protocol for any<br>wallet, blockchain, or token
+				ZK privacy protocol for any<br />wallet, blockchain, or token
 			</p>
 
-			<div
-				class="bg-green border-dark mx-auto block w-fit cursor-default select-none rounded-[10px] border px-4 py-2 text-xl font-[300] md:mb-20 md:ml-0 md:mr-0 xl:text-2xl"
-			>
-				Beta closed. Launching soon
+			<div class="flex flex-col items-center gap-3 md:mb-20 md:items-start">
+				<div
+					class="block w-fit cursor-default select-none rounded-[10px] border border-dark bg-green px-4 py-2 text-xl font-[300] xl:text-2xl"
+				>
+					Beta closed. Launching soon
+				</div>
+
+				<TokenAddress />
 			</div>
 		</div>
 
