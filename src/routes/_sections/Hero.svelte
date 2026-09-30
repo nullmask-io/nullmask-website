@@ -1,5 +1,6 @@
 <script>
 	import OneClick from '$Components/AnimatedIcons/OneClick/index.svelte'
+	import LaunchTimer from '$UI/LaunchTimer.svelte'
 	import TokenAddress from '$UI/TokenAddress.svelte'
 	import { mediaQuery } from '$lib/Stores/mediaQuery'
 	import { HEADER, SOCIALS } from '$lib/const'
@@ -32,12 +33,8 @@
 				ZK privacy protocol for any<br />wallet, blockchain, or token
 			</p>
 
-			<div class="flex flex-col items-center gap-3 md:mb-20 md:items-start">
-				<div
-					class="block w-fit cursor-default select-none rounded-[10px] border border-dark bg-green px-4 py-2 text-xl font-[300] xl:text-2xl"
-				>
-					Beta closed. Launching soon
-				</div>
+			<div class="hero-cta flex flex-col items-center gap-3 md:mb-20 md:items-start">
+				<LaunchTimer />
 
 				<TokenAddress />
 			</div>
@@ -55,6 +52,14 @@
 	@media (max-height: 700px) {
 		.hero-top {
 			margin-top: 20px !important;
+		}
+	}
+
+	/* A short laptop screen: the countdown card is taller than a button, so the
+	   block drops its bottom margin to keep the heading clear of the header */
+	@media (min-width: 768px) and (max-height: 820px) {
+		.hero-cta {
+			margin-bottom: 0;
 		}
 	}
 </style>

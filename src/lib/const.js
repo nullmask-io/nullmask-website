@@ -18,6 +18,12 @@ export const SOCIALS = {
 export const NULLMASK_LINK = 'https://app.nullmask.io'
 
 /**
+ * When the app opens to everyone: the hero counts down to it, in the
+ * viewer's local time.
+ */
+export const LAUNCH_AT = '2026-10-01T17:00:00Z'
+
+/**
  * The MASK mint on Solana.
  *
  * Publishing a token address invites look-alike sites with one character
