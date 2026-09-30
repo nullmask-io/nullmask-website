@@ -65,6 +65,15 @@
 	}
 	$: when = now === null ? '' : whenLabel(target)
 
+	/** The viewer's own offset from UTC on the launch day, e.g. «GMT+2», «GMT-4», «GMT+5:30». */
+	const zoneLabel = (ms) => {
+		const offset = -new Date(ms).getTimezoneOffset()
+		const h = Math.floor(Math.abs(offset) / 60)
+		const m = Math.abs(offset) % 60
+		return `GMT${offset < 0 ? '-' : '+'}${h}${m ? `:${pad(m)}` : ''}`
+	}
+	$: zone = now === null ? '' : zoneLabel(target)
+
 	$: srText =
 		left === null
 			? 'Launching soon'
@@ -95,8 +104,14 @@
 	<CrowdDigits className="crowd" {groups} {urgent} {live} />
 
 	<div class="relative flex items-center justify-between gap-3 px-4 pb-3 md:px-5 md:pb-4">
-		<span class="note">
-			{#if when}{live ? 'Opened' : 'Opens'} {when}{/if}
+		<!-- The time is the viewer's own, and the card says so -->
+		<span class="note flex flex-col">
+			<span class="line"
+				>{#if when}{live ? 'Opened' : 'Opens'} {when}{/if}</span
+			>
+			<span class="line zone"
+				>{#if zone}Your time · {zone}{/if}</span
+			>
 		</span>
 		<span class="note hint" aria-hidden="true">
 			<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
@@ -163,6 +178,17 @@
 		font-weight: 300;
 		color: rgba(217, 217, 217, 0.6);
 		white-space: nowrap;
+	}
+	/* both lines keep their height before the page knows the viewer's time */
+	.line {
+		min-height: 1.35em;
+		line-height: 1.35;
+	}
+	.zone {
+		font-size: 10px;
+		font-weight: 400;
+		letter-spacing: 0.04em;
+		color: rgba(205, 239, 51, 0.7);
 	}
 	.hint {
 		display: none;
