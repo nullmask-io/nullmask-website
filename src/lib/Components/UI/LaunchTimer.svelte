@@ -21,7 +21,7 @@
 	/** Whether waves run, as the guard says; null until the landing's server has asked it. */
 	let wavesOn = null
 	let waveMs = 15 * 60_000
-	/** Wave boundaries: offset + k x interval from 00:00 UTC, or from the launch in the preview. */
+	/** Wave boundaries: offset + k x interval from 00:00 UTC. */
 	let waveBase = 0
 
 	/** Unix ms on this device's clock; null until the page runs in the browser. */
@@ -34,16 +34,6 @@
 	let lastWave = null
 
 	onMount(() => {
-		// Preview: ?demo = launch in 3 s and a wave every 20 s; or ?launch=<s>&wave=<s>.
-		const params = new URLSearchParams(window.location.search)
-		const demo = params.has('demo')
-		const launchIn = Number(params.get('launch') ?? (demo ? 3 : NaN))
-		const waveEvery = Number(params.get('wave') ?? (demo ? 20 : NaN))
-		if (launchIn > 0) target = Date.now() + launchIn * 1000
-		if (waveEvery > 0) {
-			waveMs = waveEvery * 1000
-			waveBase = target
-		}
 		sawCountdown = Date.now() < target
 
 		// The schedule from the guard, through the landing's own server (/api/waves)
@@ -61,11 +51,8 @@
 				wavesOn = false
 			}
 		}
-		if (waveEvery > 0) wavesOn = true
-		else {
-			loadSchedule()
-			refresh = setInterval(loadSchedule, SCHEDULE_REFRESH_MS)
-		}
+		loadSchedule()
+		refresh = setInterval(loadSchedule, SCHEDULE_REFRESH_MS)
 
 		let timer
 		// Tick just after each second boundary, so the digits turn with the wall clock.
