@@ -35,6 +35,12 @@
 		thumbnail: '/thumbnail.webp'
 	}
 
+	// Plain document pages: they set their own title, description and share
+	// tags, and render on the server without waiting for the intro animation,
+	// so their text is in the HTML for anyone fetching the page
+	const DOCUMENT_PAGES = ['/compliance']
+	$: isDocumentPage = DOCUMENT_PAGES.includes($page.url.pathname)
+
 	gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin, ScrollSmoother)
 
 	ScrollTrigger.defaults({
@@ -112,18 +118,20 @@
 </script>
 
 <svelte:head>
-	<title>{metadata.title}</title>
-	<meta name="description" content={metadata.description} />
-	<meta property="og:url" content="https://nullmask.io/" />
-	<meta property="og:title" content={metadata.title} />
-	<meta property="og:description" content={metadata.description} />
-	<meta property="og:image:url" content={metadata.thumbnail} />
-	<meta property="twitter:domain" content="nullmask.io" />
-	<meta property="twitter:url" content="https://nullmask.io/" />
-	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:image" content={metadata.thumbnail} />
-	<meta property="twitter:title" content={metadata.title} />
-	<meta property="twitter:description" content={metadata.description} />
+	{#if !isDocumentPage}
+		<title>{metadata.title}</title>
+		<meta name="description" content={metadata.description} />
+		<meta property="og:url" content="https://nullmask.io/" />
+		<meta property="og:title" content={metadata.title} />
+		<meta property="og:description" content={metadata.description} />
+		<meta property="og:image:url" content={metadata.thumbnail} />
+		<meta property="twitter:domain" content="nullmask.io" />
+		<meta property="twitter:url" content="https://nullmask.io/" />
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:image" content={metadata.thumbnail} />
+		<meta property="twitter:title" content={metadata.title} />
+		<meta property="twitter:description" content={metadata.description} />
+	{/if}
 </svelte:head>
 
 <NavigationProgressBar bind:this={navigationProgressBar} />
@@ -158,7 +166,7 @@
 
 <Header />
 
-{#if isContentInitialized}
+{#if isContentInitialized || isDocumentPage}
 	<slot />
 {/if}
 

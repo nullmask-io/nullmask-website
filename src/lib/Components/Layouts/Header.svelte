@@ -229,6 +229,40 @@
 						<p>Business Inquiries</p>
 					</span>
 				</a>
+
+				<a
+					href="/compliance"
+					class={cn(
+						'border-border group relative flex h-14 flex-shrink-0 items-center overflow-hidden border-b px-4 transition-all duration-500',
+						$currentSection.theme === 'dark' ? 'bg-dark hover:bg-light' : 'bg-light  hover:bg-dark'
+					)}
+					class:border-light={$currentSection.theme === 'dark'}
+					class:border-dark={$currentSection.theme === 'light'}
+				>
+					<span
+						class={cn(
+							'relative z-10 flex items-center gap-2 transition-all duration-500',
+							$currentSection.theme === 'dark'
+								? 'text-light group-hover:text-dark'
+								: 'text-dark group-hover:text-light'
+						)}
+					>
+						<svg
+							class="h-6 w-6 text-inherit"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+							<path d="m9 12 2 2 4-4" />
+						</svg>
+						<p>Compliance</p>
+					</span>
+				</a>
 			</div>
 		</div>
 	</div>
