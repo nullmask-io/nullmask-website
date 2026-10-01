@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte'
 	import { fade, fly } from 'svelte/transition'
 
 	import { mediaQuery } from '$Stores/mediaQuery'
@@ -6,7 +7,7 @@
 	import { isMenuOpen, toggleMenu } from '$Stores/menuStore'
 	import { currentSection } from '$lib/Stores/currentSection'
 
-	import { HEADER, SOCIALS } from '$lib/const'
+	import { HEADER, LAUNCH_AT, SOCIALS } from '$lib/const'
 	import Logo from '$Components/AnimatedIcons/Logo/Mark.svelte'
 	import Wordmark from '$Components/AnimatedIcons/Wordmark/Wordmark.svelte'
 	import { cn } from '$utils'
@@ -15,6 +16,16 @@
 	import Email from '$Components/AnimatedIcons/Socials/email.svelte'
 	import Article from '$Components/AnimatedIcons/Socials/article.svelte'
 	import Nullmask from '$Components/AnimatedIcons/Socials/nullmask.svelte'
+
+	// The menu's status line follows the launch on the viewer's own clock
+	let launched = false
+	onMount(() => {
+		const at = new Date(LAUNCH_AT).getTime()
+		const check = () => (launched = Date.now() >= at)
+		check()
+		const timer = setInterval(check, 1000)
+		return () => clearInterval(timer)
+	})
 </script>
 
 <header
@@ -103,7 +114,7 @@
 						)}
 					>
 						<Nullmask className="text-inherit h-6 w-6" />
-						<p class="">Beta closed. Launching soon</p>
+						<p class="">{launched ? 'Now live' : 'Beta closed. Launching soon'}</p>
 					</span>
 				</div>
 				<a
