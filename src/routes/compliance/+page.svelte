@@ -286,10 +286,10 @@
 					<ol class="how">
 						<li>
 							Open Etherscan's
-							<a href="{ETHERSCAN}/verifySig" target="_blank" rel="noopener noreferrer"
-								>Verify Signature</a
+							<a href="{ETHERSCAN}/verifiedSignatures" target="_blank" rel="noopener noreferrer"
+								>Verified Signatures</a
 							>
-							tool and paste the signer address, the message and the signature. Use the copy buttons above:
+							page, choose Verify Signature and paste the signer address, the message and the signature. Use the copy buttons above:
 							the message must match exactly, including line breaks.
 						</li>
 						<li>
