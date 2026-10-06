@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte'
 	import CrowdDigits from '$UI/CrowdDigits.svelte'
-	import { LAUNCH_AT, NULLMASK_LINK } from '$lib/const'
+	import { LAUNCH_AT, NULLMASK_LINK, UPDATE_AT } from '$lib/const'
 	import { cn } from '$utils'
 
 	export let className = ''
@@ -18,6 +18,8 @@
 	const SCHEDULE_REFRESH_MS = 5 * 60_000
 
 	let target = new Date(at).getTime()
+	/** A scheduled update the card counts down to instead of the next wave; null when none. */
+	const updateAt = UPDATE_AT ? new Date(UPDATE_AT).getTime() : null
 	/** Whether waves run, as the guard says; null until the landing's server has asked it. */
 	let wavesOn = null
 	let waveMs = 15 * 60_000
@@ -73,9 +75,11 @@
 	$: launched = left === 0
 	// LIVE only for the few seconds after zero, and only for whoever was watching
 	$: hello = launched && sawCountdown && now < target + LIVE_HOLD_MS
-	$: waves = launched && !hello && wavesOn === true
+	// Until a scheduled update the card counts down to it; after it, back to the waves
+	$: updating = launched && !hello && updateAt !== null && now < updateAt
+	$: waves = launched && !hello && !updating && wavesOn === true
 	// waves off, or the guard did not answer: the crowd holds the mask, no countdown
-	$: still = launched && !hello && !waves
+	$: still = launched && !hello && !waves && !updating
 
 	// The wave the crowd is waiting for
 	$: waveIndex = now === null ? 0 : Math.floor((now - waveBase) / waveMs)
@@ -92,7 +96,8 @@
 	$: leaving = waves && now < leavingUntil
 
 	$: toWave = now === null ? 0 : Math.max(0, Math.ceil((nextWave - now) / 1000 - 1e-6))
-	$: shown = waves ? toWave : (left ?? 0)
+	$: toUpdate = now === null || updateAt === null ? 0 : Math.max(0, Math.ceil((updateAt - now) / 1000 - 1e-6))
+	$: shown = updating ? toUpdate : waves ? toWave : (left ?? 0)
 	$: urgent = now !== null && !hello && shown > 0 && shown <= URGENT_SECONDS
 
 	$: days = Math.floor(shown / 86400)
@@ -105,9 +110,10 @@
 	$: groups =
 		now === null || hello
 			? null
-			: waves
+			: waves || updating
 				? [
-						...(hours > 0 ? [{ unit: 'hrs', text: pad(hours) }] : []),
+						...(days > 0 ? [{ unit: 'days', text: pad(days) }] : []),
+						...(days > 0 || hours > 0 ? [{ unit: 'hrs', text: pad(hours) }] : []),
 						{ unit: 'min', text: pad(minutes) },
 						{ unit: 'sec', text: pad(seconds) }
 					]
@@ -135,6 +141,7 @@
 	}
 	$: when = now === null ? '' : whenLabel(target)
 	$: leavesAt = now === null ? '' : timeLabel(nextWave, waveMs < 60_000)
+	$: updateStarts = now === null || updateAt === null ? '' : timeLabel(updateAt, false)
 
 	/** The viewer's own offset from UTC, e.g. «GMT+2», «GMT-4», «GMT+5:30». */
 	const zoneLabel = (ms) => {
@@ -147,7 +154,9 @@
 
 	$: headline = !launched
 		? 'Launching in'
-		: hello || still
+		: updating
+			? 'Update in'
+			: hello || still
 			? 'Now live'
 			: leaving
 				? 'Leaving now'
@@ -158,9 +167,11 @@
 			? 'Launching soon'
 			: !launched
 				? `Launching in ${days} days, ${hours} hours, ${minutes} minutes`
-				: hello || still
-					? 'Now live'
-					: `Live. Next withdrawal wave in ${minutes} minutes`
+				: updating
+					? `Live. Update in ${hours} hours, ${minutes} minutes`
+					: hello || still
+						? 'Now live'
+						: `Live. Next withdrawal wave in ${minutes} minutes`
 </script>
 
 <div
@@ -179,7 +190,7 @@
 			<span class="pulse" class:leaving aria-hidden="true" />
 			{headline}
 		</span>
-		{#if waves}
+		{#if waves || updating}
 			<span class="label lime">Live</span>
 		{:else if launched}
 			<span />
@@ -201,7 +212,7 @@
 		<!-- The time is the viewer's own, and the card says so -->
 		<span class="note flex flex-col">
 			<span class="line"
-				>{#if waves}Leaves at {leavesAt}{:else if still && wavesOn === null}&nbsp;{:else if when}{launched ? 'Opened' : 'Opens'}
+				>{#if updating}Starts at {updateStarts}{:else if waves}Leaves at {leavesAt}{:else if still && wavesOn === null}&nbsp;{:else if when}{launched ? 'Opened' : 'Opens'}
 					{when}{/if}</span
 			>
 			<span class="line zone"

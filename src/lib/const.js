@@ -24,6 +24,13 @@ export const NULLMASK_LINK = 'https://app.nullmask.io'
 export const LAUNCH_AT = '2026-10-01T17:00:00Z'
 
 /**
+ * A scheduled update: until then the hero counts down to it instead of to the
+ * next wave, and goes back to the waves by itself once it has passed. Null when
+ * none is scheduled.
+ */
+export const UPDATE_AT = '2026-10-07T05:00:00Z'
+
+/**
  * The MASK mint on Solana.
  *
  * Publishing a token address invites look-alike sites with one character
