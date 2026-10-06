@@ -155,7 +155,7 @@
 	$: headline = !launched
 		? 'Launching in'
 		: updating
-			? 'Update in'
+			? 'Base transfers will be live in'
 			: hello || still
 			? 'Now live'
 			: leaving
@@ -168,7 +168,7 @@
 			: !launched
 				? `Launching in ${days} days, ${hours} hours, ${minutes} minutes`
 				: updating
-					? `Live. Update in ${hours} hours, ${minutes} minutes`
+					? `Base transfers will be live in ${hours} hours, ${minutes} minutes`
 					: hello || still
 						? 'Now live'
 						: `Live. Next withdrawal wave in ${minutes} minutes`
@@ -188,9 +188,15 @@
 	<div class="relative flex items-center justify-between gap-3 px-4 pt-3 md:px-5 md:pt-4">
 		<span class="label flex items-center gap-2">
 			<span class="pulse" class:leaving aria-hidden="true" />
+			{#if updating}
+				<!-- Base's mark: the blue square -->
+				<svg class="base-mark" viewBox="0 0 16 16" aria-hidden="true"
+					><rect width="16" height="16" rx="3" fill="#0052FF" /></svg
+				>
+			{/if}
 			{headline}
 		</span>
-		{#if waves || updating}
+		{#if waves}
 			<span class="label lime">Live</span>
 		{:else if launched}
 			<span />
@@ -212,7 +218,7 @@
 		<!-- The time is the viewer's own, and the card says so -->
 		<span class="note flex flex-col">
 			<span class="line"
-				>{#if updating}Starts at {updateStarts}{:else if waves}Leaves at {leavesAt}{:else if still && wavesOn === null}&nbsp;{:else if when}{launched ? 'Opened' : 'Opens'}
+				>{#if updating}Live at {updateStarts}{:else if waves}Leaves at {leavesAt}{:else if still && wavesOn === null}&nbsp;{:else if when}{launched ? 'Opened' : 'Opens'}
 					{when}{/if}</span
 			>
 			<span class="line zone"
@@ -273,6 +279,11 @@
 	}
 	.label.lime {
 		color: #cdef33;
+	}
+	.base-mark {
+		width: 11px;
+		height: 11px;
+		flex: none;
 	}
 	.pulse {
 		position: relative;
