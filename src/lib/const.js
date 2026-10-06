@@ -28,7 +28,7 @@ export const LAUNCH_AT = '2026-10-01T17:00:00Z'
  * next wave, and goes back to the waves by itself once it has passed. Null when
  * none is scheduled.
  */
-export const UPDATE_AT = '2026-10-07T05:00:00Z'
+export const UPDATE_AT = '2026-10-07T17:00:00Z'
 
 /**
  * The MASK mint on Solana.
