@@ -26,9 +26,10 @@ export const LAUNCH_AT = '2026-10-01T17:00:00Z'
 /**
  * A scheduled update: until then the hero counts down to it instead of to the
  * next wave, and goes back to the waves by itself once it has passed. Null when
- * none is scheduled.
+ * none is scheduled. Base transfers went live at 16:27 UTC on 7 Oct, ahead of
+ * the announced 17:00.
  */
-export const UPDATE_AT = '2026-10-07T17:00:00Z'
+export const UPDATE_AT = '2026-10-07T16:27:00Z'
 
 /**
  * The MASK mint on Solana.

@@ -16,6 +16,10 @@
 	const LEAVING_MS = 2400
 	/** The admin can change the schedule at any time: ask again this often. */
 	const SCHEDULE_REFRESH_MS = 5 * 60_000
+	/** How long Base's crowd holds the word BASE once the update is out. */
+	const BASE_INTRO_MS = 3800
+	/** How long after the update the card keeps saying Base is live. */
+	const BASE_NEWS_MS = 72 * 3600_000
 
 	let target = new Date(at).getTime()
 	/** A scheduled update the card counts down to instead of the next wave; null when none. */
@@ -34,9 +38,18 @@
 	let departures = 0
 	let leavingUntil = 0
 	let lastWave = null
+	/** Whether this visitor watched the update's countdown reach zero. */
+	let sawUpdate = false
+	/** Until when Base's crowd spells BASE: once per visit, while the news is fresh. */
+	let baseIntroUntil = 0
 
 	onMount(() => {
 		sawCountdown = Date.now() < target
+		sawUpdate = updateAt !== null && Date.now() < updateAt
+		// whoever comes in while the news is fresh sees Base's crowd arrive, once
+		if (updateAt !== null && Date.now() >= updateAt && Date.now() < updateAt + BASE_NEWS_MS) {
+			baseIntroUntil = Date.now() + 600 + BASE_INTRO_MS
+		}
 
 		// The schedule from the guard, through the landing's own server (/api/waves)
 		let refresh
@@ -75,11 +88,16 @@
 	$: launched = left === 0
 	// LIVE only for the few seconds after zero, and only for whoever was watching
 	$: hello = launched && sawCountdown && now < target + LIVE_HOLD_MS
+	// Base is out: its crowd spells BASE, for whoever watched zero or just came in
+	$: baseOut = launched && !hello && updateAt !== null && now !== null && now >= updateAt
+	$: baseHello =
+		baseOut && (now < baseIntroUntil || (sawUpdate && now < updateAt + BASE_INTRO_MS))
+	$: baseNews = baseOut && now < updateAt + BASE_NEWS_MS
 	// Until a scheduled update the card counts down to it; after it, back to the waves
 	$: updating = launched && !hello && updateAt !== null && now < updateAt
-	$: waves = launched && !hello && !updating && wavesOn === true
+	$: waves = launched && !hello && !baseHello && !updating && wavesOn === true
 	// waves off, or the guard did not answer: the crowd holds the mask, no countdown
-	$: still = launched && !hello && !waves && !updating
+	$: still = launched && !hello && !baseHello && !waves && !updating
 
 	// The wave the crowd is waiting for
 	$: waveIndex = now === null ? 0 : Math.floor((now - waveBase) / waveMs)
@@ -108,7 +126,7 @@
 	// Nothing until the page runs in the browser: the server's clock and time
 	// zone are not the viewer's.
 	$: groups =
-		now === null || hello
+		now === null || hello || baseHello
 			? null
 			: waves || updating
 				? [
@@ -156,7 +174,9 @@
 		? 'Launching in'
 		: updating
 			? 'Base transfers will be live in'
-			: hello || still
+			: baseHello
+				? 'Base transfers are live'
+				: hello || still
 			? 'Now live'
 			: leaving
 				? 'Leaving now'
@@ -169,7 +189,9 @@
 				? `Launching in ${days} days, ${hours} hours, ${minutes} minutes`
 				: updating
 					? `Base transfers will be live in ${hours} hours, ${minutes} minutes`
-					: hello || still
+					: baseHello
+						? 'Base transfers are live'
+						: hello || still
 						? 'Now live'
 						: `Live. Next withdrawal wave in ${minutes} minutes`
 </script>
@@ -188,7 +210,7 @@
 	<div class="relative flex items-center justify-between gap-3 px-4 pt-3 md:px-5 md:pt-4">
 		<span class="label flex items-center gap-2">
 			<span class="pulse" class:leaving aria-hidden="true" />
-			{#if updating}
+			{#if updating || baseHello}
 				<!-- Base's mark: the blue square -->
 				<svg class="base-mark" viewBox="0 0 16 16" aria-hidden="true"
 					><rect width="16" height="16" rx="3" fill="#0052FF" /></svg
@@ -196,7 +218,13 @@
 			{/if}
 			{headline}
 		</span>
-		{#if waves}
+		{#if waves && baseNews}
+			<span class="label base-live flex items-center gap-1.5"
+				><svg class="base-mark" viewBox="0 0 16 16" aria-hidden="true"
+					><rect width="16" height="16" rx="3" fill="#0052FF" /></svg
+				>Base live</span
+			>
+		{:else if waves}
 			<span class="label lime">Live</span>
 		{:else if launched}
 			<span />
@@ -210,7 +238,8 @@
 		{groups}
 		{urgent}
 		live={still}
-		word={hello ? 'LIVE' : null}
+		word={hello ? 'LIVE' : baseHello ? 'BASE' : null}
+		tint={baseHello ? 'base' : null}
 		{departures}
 	/>
 
@@ -218,7 +247,7 @@
 		<!-- The time is the viewer's own, and the card says so -->
 		<span class="note flex flex-col">
 			<span class="line"
-				>{#if updating}Live at {updateStarts}{:else if waves}Leaves at {leavesAt}{:else if still && wavesOn === null}&nbsp;{:else if when}{launched ? 'Opened' : 'Opens'}
+				>{#if updating}Live at {updateStarts}{:else if baseHello}Live on Ethereum and Base{:else if waves}Leaves at {leavesAt}{:else if still && wavesOn === null}&nbsp;{:else if when}{launched ? 'Opened' : 'Opens'}
 					{when}{/if}</span
 			>
 			<span class="line zone"
@@ -279,6 +308,9 @@
 	}
 	.label.lime {
 		color: #cdef33;
+	}
+	.label.base-live {
+		color: #7fa6ff;
 	}
 	.base-mark {
 		width: 11px;

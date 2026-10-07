@@ -12,6 +12,8 @@
 	export let word = null
 	/** Counts the waves that have left: each step sends part of the crowd off the card. */
 	export let departures = 0
+	/** 'base': the word arrives as a stream of Base-blue dots from the right, some of whom stay in the crowd. */
+	export let tint = null
 	export let className = ''
 
 	/**
@@ -27,12 +29,13 @@
 	let canvas
 	let engine = null
 
-	$: if (engine) engine.show(groups, urgent, live, word)
+	$: if (engine) engine.show(groups, urgent, live, word, tint)
 	$: if (engine) engine.depart(departures)
 
 	const TAU = Math.PI * 2
 	const LIME = '#cdef33'
 	const INK = '#f2f3ef'
+	const BLUE = '#3b74ff'
 
 	// How a dot is drawn: the crowd far and near, just let go, held in a digit, lit, a colon, flying in.
 	const FAR = 0
@@ -43,6 +46,14 @@
 	const COLON = 5
 	const STREAK = 6
 	const LEAVE = 7
+	// Base's people: in the crowd far and near, held in the word, flying in, passing on out
+	const BFAR = 8
+	const BNEAR = 9
+	const BLIT = 10
+	const BSTREAK = 11
+	const BLEAVE = 12
+	/** Of the blue arrivals, the share that stays in the crowd once the word lets go. */
+	const BLUE_STAY = 0.3
 
 	const clamp = (v, a, b) => Math.min(b, Math.max(a, v))
 	const shuffle = (list) => {
@@ -85,7 +96,7 @@
 		let leavingCount = 0
 		const ripples = []
 		const lens = { x: 0, y: 0, ex: 0, ey: 0, on: false, a: 0 }
-		let want = { groups: null, urgent: false, live: false, word: null }
+		let want = { groups: null, urgent: false, live: false, word: null, tint: null }
 
 		// Glyph widths of Poppins Bold, as shares of the font size (measured once the font is in).
 		let digitW = 0.64
@@ -210,7 +221,7 @@
 		 * `reuse` lets it take dots that have only just been let go (a resize).
 		 */
 		const gather = (slot, points, reuse) => {
-			const free = dots.filter((dot) => !dot.slot && !dot.leaving && (reuse || clock - dot.freedAt > 140))
+			const free = dots.filter((dot) => !dot.slot && !dot.leaving && !dot.blue && (reuse || clock - dot.freedAt > 140))
 			const scored = free.map((dot) => ({
 				dot,
 				score: Math.hypot(dot.x - slot.cx, dot.y - slot.cy) * (0.55 + Math.random() * 0.9)
@@ -307,7 +318,7 @@
 			return { points, dot: pitch * 0.4 }
 		}
 
-		const toWord = (text) => {
+		const toWord = (text, blue) => {
 			const { points, dot } = wordPoints(text)
 			if (!points.length) return false
 			for (const slot of slots) release(slot, true)
@@ -315,6 +326,25 @@
 			slots = [slot]
 			units = []
 			geo = { ...(geo ?? { pitch: dot / 0.4, textTop: 0, unitsY: 0, fs: 0 }), dot }
+			if (blue) {
+				// a new crowd pours in from the right and spells the word itself
+				const targets = points.slice().sort((a, b) => a.x - b.x)
+				targets.forEach((target, k) => {
+					const d = spawn(W + 6 + Math.random() * W * 0.5, H * 0.1 + Math.random() * H * 0.8)
+					d.blue = true
+					d.vx = -(260 + Math.random() * 380)
+					d.vy = (Math.random() - 0.5) * 60
+					d.born = clock - 500 + (k / targets.length) * 300
+					d.slot = slot
+					d.tx = target.x
+					d.ty = target.y
+					d.heat = 0.85
+					slot.dots.push(d)
+				})
+				ripple(W + 20, H / 2, 2600, 560, 30, 1.4)
+				ripple(W / 2, H / 2, 2400, 300, 26, 1.8)
+				return true
+			}
 			gather(slot, points, true)
 			ripple(W / 2, H / 2, 4200, 520, 34, 1.6)
 			ripple(W / 2, H / 2, 2400, 300, 26, 1.8)
@@ -359,11 +389,12 @@
 			return true
 		}
 
-		const show = (list, isUrgent, isLive, theWord) => {
-			want = { groups: list, urgent: isUrgent, live: isLive, word: theWord }
+		const show = (list, isUrgent, isLive, theWord, theTint) => {
+			want = { groups: list, urgent: isUrgent, live: isLive, word: theWord, tint: theTint }
 			if (!fontReady || !W) return
 			if (theWord) {
-				if (shape !== `word:${theWord}`) shape = toWord(theWord) ? `word:${theWord}` : null
+				const key = `word:${theWord}:${theTint ?? ''}`
+				if (shape !== key) shape = toWord(theWord, theTint === 'base') ? key : null
 				return
 			}
 			if (isLive) {
@@ -372,7 +403,15 @@
 			}
 			if (shape) {
 				// the word or the mask bursts back into the crowd, and the digits gather from it
+				const held = slots.flatMap((slot) => slot.dots)
 				for (const slot of slots) release(slot, true)
+				// most of Base's arrivals pass on out to the right; the rest join the crowd for good
+				for (const dot of held) {
+					if (!dot.blue || Math.random() < BLUE_STAY) continue
+					dot.leaving = true
+					dot.leaveAt = clock + 500 + Math.random() * 900
+					leavingCount++
+				}
 				slots = []
 				units = []
 				shape = null
@@ -499,7 +538,19 @@
 					else if (dot.y > H + 6) dot.y -= H + 12
 				}
 				// how the dot is drawn this frame
-				dot.kind = dot.leaving
+				dot.kind = dot.blue
+					? dot.leaving
+						? clock >= dot.leaveAt
+							? BLEAVE
+							: BNEAR
+						: !slot
+							? dot.seed < 0.55 && dot.heat <= 0.2
+								? BFAR
+								: BNEAR
+							: v > 70
+								? BSTREAK
+								: BLIT
+					: dot.leaving
 					? clock >= dot.leaveAt
 						? LEAVE
 						: WARM
@@ -566,6 +617,13 @@
 			dotsOf(NEAR, crowdR * 1.25, true)
 			ctx.fillStyle = 'rgba(217,217,217,0.42)'
 			ctx.fill()
+			// Base's people in the crowd
+			dotsOf(BFAR, crowdR * 0.85, false)
+			ctx.fillStyle = 'rgba(59,116,255,0.42)'
+			ctx.fill()
+			dotsOf(BNEAR, crowdR * 1.3, false)
+			ctx.fillStyle = 'rgba(59,116,255,0.7)'
+			ctx.fill()
 
 			// just let go: still warm, cooling back into the crowd
 			dotsOf(WARM, crowdR * 1.2, false)
@@ -584,6 +642,15 @@
 			ctx.lineWidth = crowdR * 1.5
 			ctx.lineCap = 'round'
 			ctx.stroke()
+			ctx.beginPath()
+			for (const dot of dots) {
+				if (dot.kind !== BLEAVE) continue
+				const k = Math.min(0.03, 22 / (dot.speed || 1))
+				ctx.moveTo(dot.x - dot.vx * k, dot.y - dot.vy * k)
+				ctx.lineTo(dot.x, dot.y)
+			}
+			ctx.strokeStyle = 'rgba(59,116,255,0.75)'
+			ctx.stroke()
 
 			// held dots: the digits, the lit ones with a halo, the colons beating with the seconds
 			dotsOf(INKED, r, false)
@@ -599,6 +666,13 @@
 			ctx.globalAlpha = 0.35 + 0.65 * beat
 			ctx.fill()
 			ctx.globalAlpha = 1
+			// the word Base's crowd spells: blue, with a soft halo
+			dotsOf(BLIT, r * 2.2, false)
+			ctx.fillStyle = 'rgba(0,82,255,0.2)'
+			ctx.fill()
+			dotsOf(BLIT, r, false)
+			ctx.fillStyle = BLUE
+			ctx.fill()
 
 			// the ones still flying in, as streaks
 			ctx.beginPath()
@@ -611,6 +685,15 @@
 			ctx.strokeStyle = LIME
 			ctx.lineWidth = r * 1.5
 			ctx.lineCap = 'round'
+			ctx.stroke()
+			ctx.beginPath()
+			for (const dot of dots) {
+				if (dot.kind !== BSTREAK) continue
+				const k = Math.min(0.05, 16 / dot.speed)
+				ctx.moveTo(dot.x - dot.vx * k, dot.y - dot.vy * k)
+				ctx.lineTo(dot.x, dot.y)
+			}
+			ctx.strokeStyle = BLUE
 			ctx.stroke()
 
 			// the units under each group
@@ -657,7 +740,7 @@
 			if (first) for (let i = 0; i < crowdSize(); i++) spawn(Math.random() * W, Math.random() * H)
 			layoutKey = ''
 			glyphs.clear()
-			show(want.groups, want.urgent, want.live, want.word)
+			show(want.groups, want.urgent, want.live, want.word, want.tint)
 		}
 
 		const fontsIn = () => {
@@ -666,7 +749,7 @@
 			sctx.font = '700 100px Poppins, sans-serif'
 			digitW = sctx.measureText('0').width / 100 + 0.05
 			colonW = sctx.measureText(':').width / 100 + 0.1
-			show(want.groups, want.urgent, want.live, want.word)
+			show(want.groups, want.urgent, want.live, want.word, want.tint)
 		}
 		if (document.fonts?.load) {
 			document.fonts.load('700 64px Poppins').then(fontsIn, fontsIn)
@@ -676,7 +759,7 @@
 		const picture = new Image()
 		picture.onload = () => {
 			mask = picture
-			show(want.groups, want.urgent, want.live, want.word)
+			show(want.groups, want.urgent, want.live, want.word, want.tint)
 		}
 		picture.src = '/nullmask-mask.png'
 
