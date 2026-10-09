@@ -31,7 +31,7 @@
 
 	const metadata = {
 		title: 'Make any wallet and any transaction private — in one click.',
-		description: `NullMask is the first private VPN for crypto, enabling invisible and untraceable tokens and stablecoin transactions across any chain and wallet — total privacy for Web3. One click. Total privacy. Any wallet, any transaction.`,
+		description: `NullMask is a private VPN for crypto: confidential transfers, swaps and bridging for tokens and stablecoins on Ethereum and Base. One click. Any wallet.`,
 		thumbnail: '/thumbnail.webp'
 	}
 

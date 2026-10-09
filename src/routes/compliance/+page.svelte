@@ -5,33 +5,41 @@
 	import CopyButton from '$lib/compliance/CopyButton.svelte'
 	import AddressLine from '$lib/compliance/AddressLine.svelte'
 	import {
-		CHAIN,
-		CONTRACTS,
+		BASESCAN,
+		BASE_POOL_CREATION_TX,
+		BRIDGE_FEE_ACCOUNT,
 		ETHERSCAN,
-		OPERATIONAL,
+		NETWORKS,
 		addressesCsv,
-		etherscanAddress
+		explorerLink
 	} from '$lib/compliance/addresses'
 	// Rendered as-is: the signature only verifies against these exact bytes
 	import statement from '$lib/compliance/ownership-statement.json'
 
 	const CONTACT = 'compliance@nullmask.io'
-	const UPDATED = '2026-10-01'
+	const UPDATED = { iso: '2026-10-09', text: '9 October 2026' }
 
 	const meta = {
 		title: 'Compliance | Nullmask',
 		description:
-			'Nullmask on-chain addresses on Ethereum mainnet, how deposits are screened, and the contact for law enforcement and regulators.'
+			'Nullmask on-chain addresses on Ethereum mainnet and Base, how deposits are screened, and the contact for law enforcement and regulators.'
 	}
 
 	const sections = [
 		{ id: 'law-enforcement', title: 'Law enforcement contact' },
-		{ id: 'contracts', title: 'Contract addresses' },
-		{ id: 'operational', title: 'Operational addresses' },
+		...NETWORKS.map((net) => ({ id: net.id, title: net.name })),
 		{ id: 'screening', title: 'How deposits are screened' },
+		{ id: 'bridge', title: 'Bridge' },
 		{ id: 'security', title: 'Security' },
 		{ id: 'ownership', title: 'Proof of ownership' }
 	]
+
+	// #contracts and #operational were Ethereum's sections before Base was added;
+	// links to them still land on Ethereum's lists
+	const partId = (net, part) => (net.id === 'ethereum' && part !== 'assets' ? part : `${net.id}-${part}`)
+
+	const [ethereum, base] = NETWORKS
+	const assetList = (net) => net.assets.map((a) => a.symbol).join(' and ')
 
 	// Single quotes keep the multi-line message literal in any POSIX shell
 	const shellQuote = (s) => `'${s.replace(/'/g, `'\\''`)}'`
@@ -75,12 +83,13 @@
 <div class="page">
 	<main class="doc">
 		<header class="intro">
-			<p class="eyebrow">Nullmask &middot; {CHAIN.name}</p>
+			<p class="eyebrow">Nullmask &middot; {ethereum.name} &middot; {base.name}</p>
 			<h1>Compliance</h1>
 			<p class="lead">
-				Nullmask is a privacy protocol on {CHAIN.name} (chain ID {CHAIN.id}). Deposits are screened
-				before they enter the pool. This page lists the protocol's on-chain addresses, explains how
-				deposits are screened, and shows how to reach us.
+				Nullmask is a privacy protocol on {ethereum.name} (chain ID {ethereum.chainId}) and {base.name}
+				(chain ID {base.chainId}). Deposits are screened before they enter the pool. This page lists
+				the protocol's on-chain addresses, explains how deposits are screened, and shows how to reach
+				us.
 			</p>
 
 			<nav class="toc" aria-label="On this page">
@@ -90,7 +99,7 @@
 			</nav>
 
 			<div class="csv">
-				<span>Labeling these addresses? Copy every address on this page in one go.</span>
+				<span>Labeling these addresses? Copy every Nullmask address on this page in one go.</span>
 				<CopyButton value={csv} label="all addresses as CSV" text="Copy all as CSV" />
 			</div>
 		</header>
@@ -126,73 +135,97 @@
 			</ul>
 		</section>
 
-		<!-- Contracts -->
-		<section id="contracts" class="block" aria-labelledby="contracts-title">
-			<div class="block-head">
-				<h2 id="contracts-title">Contract addresses</h2>
-				<p class="facts">
-					<span>{CHAIN.name}, chain ID {CHAIN.id}</span>
-					<span
-						>Deployed at block
-						<a href="{ETHERSCAN}/block/{CHAIN.deployBlock}" target="_blank" rel="noopener noreferrer"
-							>{CHAIN.deployBlock}</a
-						></span
-					>
-					<span>Source verified on Etherscan</span>
-				</p>
-			</div>
+		<!-- One section per network, the same three lists in each -->
+		{#each NETWORKS as net}
+			<section id={net.id} class="block" aria-labelledby="{net.id}-title">
+				<div class="block-head">
+					<h2 id="{net.id}-title">{net.name}</h2>
+					<p class="facts">
+						<span>Chain ID {net.chainId}</span>
+						<span
+							>Pool deployed at block
+							<a
+								href="{net.explorer.url}/block/{net.deployBlock}"
+								target="_blank"
+								rel="noopener noreferrer">{net.deployBlock}</a
+							></span
+						>
+						<span>Source verified on {net.explorer.name}</span>
+					</p>
+				</div>
 
-			<div class="card list">
-				{#each CONTRACTS as item}
-					<div class="row">
-						<div class="row-info">
-							<h3>{item.name}</h3>
-							<span class="kind">{item.kind}</span>
-							{#if item.note}<p class="note">{item.note}</p>{/if}
-						</div>
-						<div class="row-addrs">
-							{#each item.addresses as address}
-								<AddressLine {address} label={item.name} />
-							{/each}
-						</div>
+				<div id={partId(net, 'contracts')} class="part">
+					<div class="part-head">
+						<h3>Contract addresses</h3>
 					</div>
-				{/each}
-			</div>
-		</section>
+					<div class="card list">
+						{#each net.contracts as item}
+							<div class="row">
+								<div class="row-info">
+									<h4>{item.name}</h4>
+									{#if item.kind}<span class="kind">{item.kind}</span>{/if}
+									{#if item.note}<p class="note">{item.note}</p>{/if}
+								</div>
+								<div class="row-addrs">
+									{#each item.entries as e}
+										<AddressLine address={e.address} label={e.label} tag={e.tag} explorer={net.explorer} />
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</div>
 
-		<!-- Operational -->
-		<section id="operational" class="block" aria-labelledby="operational-title">
-			<div class="block-head">
-				<h2 id="operational-title">Operational addresses</h2>
-				<p class="facts"><span>Accounts the protocol operates on {CHAIN.name}</span></p>
-			</div>
+				<div id={partId(net, 'operational')} class="part">
+					<div class="part-head">
+						<h3>Operational addresses</h3>
+						<p class="part-sub">Accounts the protocol operates on {net.name}</p>
+					</div>
+					<div class="card list">
+						{#each net.operational as item}
+							<div class="row">
+								<div class="row-info">
+									<h4>{item.name}</h4>
+									{#if item.kind}<span class="kind">{item.kind}</span>{/if}
+									{#if item.note}<p class="note">{item.note}</p>{/if}
+								</div>
+								<div class="row-addrs">
+									{#each item.entries as e}
+										<AddressLine address={e.address} label={e.label} tag={e.tag} explorer={net.explorer} />
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
+				</div>
 
-			<div class="card list">
-				{#each OPERATIONAL as item}
-					<div class="row">
-						<div class="row-info">
-							<h3>{item.name}</h3>
-							{#if item.addresses.length > 1}<span class="kind">{item.addresses.length} addresses</span
-								>{/if}
-							{#if item.note}<p class="note">{item.note}</p>{/if}
-						</div>
-						<div class="row-addrs">
-							{#each item.addresses as address, i}
-								{#if item.addresses.length > 1}
-									<AddressLine
-										{address}
-										label="{item.name.replace(/s$/, '')} {i + 1}"
-										tag="{item.name.replace(/s$/, '')} {i + 1}"
-									/>
-								{:else}
-									<AddressLine {address} label={item.name} />
+				<div id={partId(net, 'assets')} class="part">
+					<div class="part-head">
+						<h3>Accepted assets</h3>
+					</div>
+					<div class="card list">
+						{#each net.assets as asset}
+							<div class="row">
+								<div class="row-info">
+									<h4>{asset.symbol}</h4>
+									<span class="kind">{asset.kind}</span>
+								</div>
+								{#if asset.address}
+									<div class="row-addrs">
+										<AddressLine
+											address={asset.address}
+											label="{asset.symbol} token contract"
+											explorer={net.explorer}
+											page="token"
+										/>
+									</div>
 								{/if}
-							{/each}
-						</div>
+							</div>
+						{/each}
 					</div>
-				{/each}
-			</div>
-		</section>
+				</div>
+			</section>
+		{/each}
 
 		<!-- Screening -->
 		<section id="screening" class="block" aria-labelledby="screening-title">
@@ -208,13 +241,15 @@
 						enters the pool until the Guard approves it.
 					</li>
 					<li>
-						<strong>ETH and USDT only.</strong> These are the only accepted assets; the contract refuses
-						any other token.
+						<strong>Listed assets only.</strong>
+						{assetList(ethereum)} on {ethereum.short}, {assetList(base)} on {base.short}; the contract
+						refuses any other token.
 					</li>
 					<li>
 						<strong>Sanctions and blocklists.</strong> Each depositor address is checked against sanctions
 						and blocklists: OFAC SDN, the Chainalysis sanctions oracle, EU and UK sanctions lists, the
-						USDT and USDC issuer blacklists, and public scam lists. It is also risk-scored by AMLBot.
+						USDT and USDC issuer blacklists (USDC only on {base.short}), and public scam lists. It is also
+						risk-scored by AMLBot.
 					</li>
 					<li>
 						<strong>Refusal criteria.</strong> Deposits linked to sanctions, stolen funds, hacks, darknet
@@ -235,6 +270,22 @@
 			</div>
 		</section>
 
+		<!-- Bridge -->
+		<section id="bridge" class="block" aria-labelledby="bridge-title">
+			<div class="block-head">
+				<h2 id="bridge-title">Bridge</h2>
+			</div>
+			<div class="card">
+				<p class="text">
+					Transfers between networks on the Bridge page are executed by NEAR Intents (1Click), a
+					third-party service; the funds never enter the Nullmask pool. Nullmask's fee for a bridge
+					order goes to the Nullmask treasury account in NEAR Intents,
+					<code class="inline-addr">{BRIDGE_FEE_ACCOUNT}</code>. To ask about a bridge order, include
+					its deposit address.
+				</p>
+			</div>
+		</section>
+
 		<!-- Security -->
 		<section id="security" class="block" aria-labelledby="security-title">
 			<div class="block-head">
@@ -242,8 +293,8 @@
 			</div>
 			<div class="card">
 				<p class="text">
-					The contracts are verified on Etherscan with full source code. An independent audit report
-					will be published on this page when it is completed.
+					The contracts are verified on Etherscan and Basescan with full source code. An independent
+					audit report will be published on this page when it is completed.
 				</p>
 			</div>
 		</section>
@@ -286,7 +337,7 @@
 					<ol class="how">
 						<li>
 							Open Etherscan's
-							<a href="{ETHERSCAN}/verifiedSignatures" target="_blank" rel="noopener noreferrer"
+							<a href="{ETHERSCAN.url}/verifiedSignatures" target="_blank" rel="noopener noreferrer"
 								>Verified Signatures</a
 							>
 							page, choose Verify Signature and paste the signer address, the message and the signature. Use the copy buttons above:
@@ -307,16 +358,26 @@
 					</ol>
 					<p class="hint">
 						Signer on Etherscan:
-						<a href={etherscanAddress(statement.address)} target="_blank" rel="noopener noreferrer"
-							>{statement.address}</a
+						<a
+							href={explorerLink(ETHERSCAN, statement.address)}
+							target="_blank"
+							rel="noopener noreferrer">{statement.address}</a
 						>
 					</p>
 				</div>
 			</div>
+
+			<p class="after-proof">
+				Signed before the 7 October 2026 upgrade; the current contracts are listed above. The same
+				deployer
+				<a href="{BASESCAN.url}/tx/{BASE_POOL_CREATION_TX}" target="_blank" rel="noopener noreferrer"
+					>deployed the {base.name} pool</a
+				> at the same address.
+			</p>
 		</section>
 
 		<footer class="foot">
-			<span>Last updated {UPDATED}</span>
+			<span>Last updated <time datetime={UPDATED.iso}>{UPDATED.text}</time></span>
 			<a href="mailto:{CONTACT}">{CONTACT}</a>
 		</footer>
 	</main>
@@ -339,7 +400,8 @@
 		padding: 104px 16px 40px;
 	}
 
-	section {
+	section,
+	.part {
 		scroll-margin-top: 100px;
 	}
 
@@ -417,7 +479,8 @@
 		font-size: 24px;
 		line-height: 1.2;
 	}
-	h3 {
+	h3,
+	h4 {
 		font-size: 16px;
 		font-weight: 600;
 		line-height: 1.3;
@@ -428,6 +491,23 @@
 	}
 	.block-head {
 		margin-bottom: 14px;
+	}
+
+	/* The three lists inside a network section */
+	.part + .part {
+		margin-top: 26px;
+	}
+	.part-head {
+		margin-bottom: 10px;
+	}
+	.part-head h3 {
+		font-size: 18px;
+	}
+	.part-sub {
+		margin-top: 2px;
+		font-size: 14px;
+		line-height: 1.5;
+		opacity: 0.75;
 	}
 	.facts {
 		display: flex;
@@ -497,7 +577,7 @@
 		gap: 4px 8px;
 		min-width: 0;
 	}
-	.row-info h3 {
+	.row-info h4 {
 		word-break: break-word;
 	}
 	.kind {
@@ -634,6 +714,23 @@
 		overflow-wrap: anywhere;
 	}
 
+	/* An address inside running text */
+	.inline-addr {
+		font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+		font-size: 0.9em;
+		word-break: break-all;
+		user-select: all;
+		-webkit-user-select: all;
+	}
+
+	/* The plain line under the signed statement */
+	.after-proof {
+		margin-top: 14px;
+		font-size: 14px;
+		line-height: 1.55;
+		opacity: 0.85;
+	}
+
 	.foot {
 		display: flex;
 		flex-wrap: wrap;
@@ -650,8 +747,15 @@
 		.doc {
 			padding: 146px 32px 56px;
 		}
-		section {
+		section,
+		.part {
 			scroll-margin-top: 126px;
+		}
+		.part + .part {
+			margin-top: 34px;
+		}
+		.part-head h3 {
+			font-size: 20px;
 		}
 		h1 {
 			font-size: 60px;
@@ -698,6 +802,9 @@
 		.text,
 		.how {
 			font-size: 16px;
+		}
+		.after-proof {
+			font-size: 15px;
 		}
 		.message {
 			padding: 18px 20px;

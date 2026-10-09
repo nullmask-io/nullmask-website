@@ -1,12 +1,16 @@
 <script>
 	import CopyButton from './CopyButton.svelte'
-	import { etherscanAddress } from './addresses'
+	import { ETHERSCAN, explorerLink } from './addresses'
 
 	export let address = ''
 	/** Name used in the copy button's accessible label. */
 	export let label = ''
 	/** Optional short tag shown before the address, e.g. "Relayer 1". */
 	export let tag = ''
+	/** Block explorer of the address's network. */
+	export let explorer = ETHERSCAN
+	/** Explorer page to open: the address, or the token tracker for a token contract. */
+	export let page = 'address'
 </script>
 
 <div class="line">
@@ -16,12 +20,12 @@
 		<CopyButton value={address} label="{label} address" />
 		<a
 			class="ext"
-			href={etherscanAddress(address)}
+			href={explorerLink(explorer, address, page)}
 			target="_blank"
 			rel="noopener noreferrer"
-			aria-label="View {label} on Etherscan"
+			aria-label="View {label} on {explorer.name}"
 		>
-			Etherscan
+			{explorer.name}
 			<svg
 				viewBox="0 0 24 24"
 				fill="none"
