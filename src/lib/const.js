@@ -18,6 +18,12 @@ export const SOCIALS = {
 export const NULLMASK_LINK = 'https://app.nullmask.io'
 
 /**
+ * The Google Tag Manager container. src/app.html loads it on every page and
+ * src/hooks.server.js fills this id in wherever the template says %gtm.id%.
+ */
+export const GTM_ID = 'GTM-T2H5SXF2'
+
+/**
  * When the app opens to everyone: the hero counts down to it, in the
  * viewer's local time.
  */
