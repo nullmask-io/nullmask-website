@@ -28,7 +28,6 @@
 	"dependencies": {
 		"clsx": "^2.1.1",
 		"gsap": "^3.12.5",
-		"katex": "^0.16.47",
 		"marked": "^18.1.0",
 		"svelte-inview": "^4.0.4",
 		"tailwind-merge": "^2.5.2"

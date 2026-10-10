@@ -1,45 +1,29 @@
----
-description: Privacy-preserving DeFi protocol powered by zero-knowledge proofs
----
+# Welcome to Nullmask
 
-# Nullmask
+Nullmask is a private balance for your wallet, on Ethereum and Base. You deposit assets into a shared pool, and from there you can send, swap and withdraw them without the blockchain showing who paid whom.
 
-Nullmask enables shielded deposits, transfers, withdrawals, and swaps on EVM chains. Users interact with a standard wallet — the protocol intercepts transactions, generates zero-knowledge proofs client-side, and submits them through a relayer to hide the sender's identity.
+You keep using the wallet you already have. Nullmask appears in it as one more network, and every action is a normal transaction that your wallet signs.
 
-Funds are held in a UTXO-based privacy pool secured by Poseidon2 commitments and Merkle membership proofs.
+## What you can do
 
-## Quick Links
+- **Deposit** ETH or a supported token from your wallet into your private balance.
+- **Send** privately to another Nullmask account.
+- **Withdraw** to any address, right away or in a Withdrawal Wave.
+- **Swap** between supported assets inside your private balance.
+- **Bridge** assets from your wallet to other networks.
 
-| Section                                                            | Description                                     |
-| ------------------------------------------------------------------ | ----------------------------------------------- |
-| [What is Nullmask?](/docs/introduction/introduction)                 | High-level introduction to the protocol         |
-| [How It Works](/docs/introduction/how-it-works)                      | End-to-end architecture walkthrough             |
-| [Protocol Specification](/docs/protocol-specification/protocol)      | Cryptographic details, algorithms, and proofs   |
-| [Smart Contract Reference](/docs/smart-contract-reference/contracts) | Solidity API for deposits, transfers, and swaps |
-| [RPC API Reference](/docs/rpc-api-reference/rpc)                     | JSON-RPC methods exposed by the proxy           |
-| [Developer Guide](/docs/developer-guide/developer)                   | Build and run locally                           |
-| [User Guide](/docs/user-guide/guide)                                 | Step-by-step instructions for end users         |
+## How it works in one minute
 
-## Key Features
+1. Open [app.nullmask.io](https://app.nullmask.io) (or [base.nullmask.io](https://base.nullmask.io) for Base), connect your wallet and add the Nullmask network to it.
+2. Sign one message. It creates your Nullmask account keys. Signing it costs nothing.
+3. Deposit. Your deposit is checked and then credited to your private balance.
+4. Send, swap or withdraw. Your wallet signs each action, and Nullmask's relayer puts it on-chain, so your wallet address does not appear as the sender.
 
-* **Shielded Transfers** — Send tokens privately without revealing sender, recipient, or amount on-chain
-* **Shielded Swaps** — Execute Uniswap V2 swaps without exposing user identity
-* **Private Deposits & Withdrawals** — Move funds in and out of the shielded pool with ZK-verified proofs
-* **Multi-Chain** — Deployed on Ethereum, Arbitrum, MegaETH, Base, and BSC
-* **Standard Wallet UX** — No special wallet needed; works with MetaMask and any EIP-1559 compatible wallet
-* **Hardware Wallet Support** — Full security without extracting spending authority from the device
-* **ERC-20 Support** — Shield any supported ERC-20 token alongside native ETH
-* **Built-in Compliance** — Deposit screening with retrospective taint recovery via revocation keys
+## Start here
 
-## Tech Stack
+- [Get started](getting-started.md): connect your wallet and make your first deposit.
+- [Fees](fees.md): what each action costs.
+- [What stays private](privacy.md): what others can and cannot see.
+- [FAQ](faq.md): short answers to common questions.
 
-| Layer            | Technology                                                                                     |
-| ---------------- | ---------------------------------------------------------------------------------------------- |
-| ZK Circuits      | [Noir](https://noir-lang.org/) + [Barretenberg](https://github.com/AztecProtocol/barretenberg) |
-| Smart Contracts  | Solidity 0.8.28, Hardhat v3, OpenZeppelin v5                                                   |
-| Frontend         | Next.js 15, React 19, TailwindCSS 4                                                            |
-| Backend Services | Fastify 5, Node.js 24                                                                          |
-| Web3             | Viem, Wagmi                                                                                    |
-| Monorepo         | Turborepo, pnpm                                                                                |
-| Storage          | LMDB (persistent state)                                                                        |
-| Code Quality     | Biome, TypeScript 5.9, knip                                                                    |
+> Nullmask is new software. Read the [Terms of Use](https://app.nullmask.io/terms) before you deposit, and do not deposit more than you can afford to lose.

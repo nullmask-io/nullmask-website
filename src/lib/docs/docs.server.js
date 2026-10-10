@@ -1,6 +1,4 @@
-import { createHash } from 'node:crypto'
 import { Marked } from 'marked'
-import katex from 'katex'
 
 import { DOCS_NAV, docsHref } from './nav.js'
 
@@ -8,22 +6,10 @@ import { DOCS_NAV, docsHref } from './nav.js'
  * Renders the documentation in src/lib/docs/content to HTML. The sources are
  * GitBook-flavoured markdown: besides GitHub markdown they may use
  * {% hint %}, {% tabs %}, {% code %}, {% content-ref %} and {% embed %}
- * blocks, $$...$$ formulas (KaTeX) and ```mermaid diagrams.
- *
- * Diagrams are drawn ahead of time: a ```mermaid block is shown as
- * ./diagrams/<first 12 hex digits of the sha256 of its trimmed source>.svg,
- * drawn with mermaid 11, ./diagrams/mermaid.config.json and the Poppins font
- * (style rules the diagrams do not use are left out of the files). A block
- * whose SVG is missing (an edited diagram) is shown as code until its SVG is
- * drawn again.
+ * blocks.
  */
 
 const sources = import.meta.glob('./content/**/*.md', {
-	query: '?raw',
-	import: 'default',
-	eager: true
-})
-const diagrams = import.meta.glob('./diagrams/*.svg', {
 	query: '?raw',
 	import: 'default',
 	eager: true
@@ -115,29 +101,6 @@ const resolveHref = (href, from) => {
 
 const attr = (attrs, name) => new RegExp(`${name}="([^"]*)"`).exec(attrs)?.[1]
 
-/**
- * KaTeX for inline formulas only breaks lines after relations and operators;
- * a break allowed after each top-level comma keeps long tuples inside a phone
- * screen.
- */
-const allowCommaBreaks = (tex) => {
-	let depth = 0
-	let out = ''
-	for (let i = 0; i < tex.length; i++) {
-		const c = tex[i]
-		if (c === '\\') {
-			out += c + (tex[i + 1] ?? '')
-			i++
-			continue
-		}
-		if (c === '{') depth++
-		if (c === '}') depth--
-		out += c
-		if (c === ',' && depth === 0) out += '\\allowbreak '
-	}
-	return out
-}
-
 // --- per-render state (rendering is synchronous) ------------------------------
 
 let current = ''
@@ -148,30 +111,6 @@ const uniqueSlug = (text) => {
 	const n = slugCounts.get(base)
 	slugCounts.set(base, n === undefined ? 0 : n + 1)
 	return n === undefined ? base : `${base}-${n + 1}`
-}
-
-const renderTex = (tex, displayMode) => {
-	try {
-		return katex.renderToString(displayMode ? tex : allowCommaBreaks(tex), {
-			displayMode,
-			throwOnError: true,
-			strict: 'ignore'
-		})
-	} catch (error) {
-		console.warn(`docs: formula on /docs/${current} not rendered: ${error.message}`)
-		return `<code>${escapeHtml(tex)}</code>`
-	}
-}
-
-const diagramFor = (source) => {
-	const hash = createHash('sha256').update(source.trim()).digest('hex').slice(0, 12)
-	const svg = diagrams[`./diagrams/${hash}.svg`]
-	if (!svg) {
-		console.warn(`docs: no drawn diagram ${hash}.svg for a mermaid block on /docs/${current}`)
-		return null
-	}
-	const width = /^<svg[^>]* width="(\d+)"/.exec(svg)?.[1]
-	return `<figure class="diagram"${width ? ` style="--diagram-width: ${width}px"` : ''}>${svg.trim()}</figure>\n`
 }
 
 const codeBlock = (text, lang, title) => {
@@ -189,7 +128,6 @@ const codeBlock = (text, lang, title) => {
 const plainText = (tokens = []) =>
 	tokens
 		.map((t) => {
-			if (t.type === 'mathInline') return t.text.replace(/\\[a-zA-Z]+/g, '').replace(/[{}]/g, '')
 			if (t.type === 'br') return ' '
 			if (t.type === 'html') return ''
 			if (t.tokens) return plainText(t.tokens)
@@ -291,40 +229,9 @@ const gitbookBlocks = {
 	}
 }
 
-// A paragraph that is a single $$...$$ formula is shown as a display formula;
-// in a list item it stays inline, after the item's number or bullet
-const mathBlock = {
-	name: 'mathBlock',
-	level: 'block',
-	tokenizer(src) {
-		if (!this.lexer.state.top) return
-		const m = /^\$\$((?:[^$]|\$(?!\$))+?)\$\$[ \t]*(?:\n[ \t]*\n+|\n?$)/.exec(src)
-		if (m) return { type: 'mathBlock', raw: m[0], text: m[1].trim() }
-	},
-	renderer(token) {
-		return `<div class="math-block">${renderTex(token.text, true)}</div>\n`
-	}
-}
-
-const mathInline = {
-	name: 'mathInline',
-	level: 'inline',
-	start(src) {
-		const i = src.indexOf('$$')
-		return i < 0 ? undefined : i
-	},
-	tokenizer(src) {
-		const m = /^\$\$((?:[^$]|\$(?!\$))+?)\$\$/.exec(src)
-		if (m) return { type: 'mathInline', raw: m[0], text: m[1] }
-	},
-	renderer(token) {
-		return renderTex(token.text, false)
-	}
-}
-
 const marked = new Marked({
 	gfm: true,
-	extensions: [gitbookBlocks, mathBlock, mathInline],
+	extensions: [gitbookBlocks],
 	renderer: {
 		heading({ tokens, depth }) {
 			const html = this.parser.parseInline(tokens)
@@ -333,10 +240,6 @@ const marked = new Marked({
 		},
 		code(token) {
 			const lang = (token.lang || '').trim().split(/\s+/)[0]
-			if (lang === 'mermaid') {
-				const figure = diagramFor(token.text)
-				if (figure) return figure
-			}
 			return codeBlock(token.text, lang, token.title)
 		},
 		link({ href, title, tokens }) {
@@ -353,9 +256,11 @@ const marked = new Marked({
 	}
 })
 
-// Tables scroll inside their own box; images load lazily
+// Tables scroll inside their own box, and a header row with no text in it (a
+// table written without headings) is left out; images load lazily
 const finish = (html) =>
 	html
+		.replace(/<thead>\s*<tr>\s*(?:<th(?: align="\w+")?>\s*<\/th>\s*)+<\/tr>\s*<\/thead>\s*/g, '')
 		.replace(/<table>/g, '<div class="table-wrap"><table>')
 		.replace(/<\/table>/g, '</table></div>')
 		.replace(/<img (?![^>]*\bloading=)/g, '<img loading="lazy" decoding="async" ')

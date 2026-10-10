@@ -1,6 +1,4 @@
 <script>
-	import 'katex/dist/katex.min.css'
-
 	import { onMount, tick } from 'svelte'
 	import { fade, fly } from 'svelte/transition'
 	import { afterNavigate } from '$app/navigation'
@@ -548,7 +546,7 @@
 		overflow-wrap: break-word;
 	}
 	.prose :global(:where(p, ul, ol, blockquote, figure, hr, .table-wrap, .code-block)),
-	.prose :global(:where(.callout, .math-block, .diagram, .tabs, .ref-card)) {
+	.prose :global(:where(.callout, .tabs, .ref-card)) {
 		margin: 0 0 18px;
 	}
 	.prose > :global(:first-child) {
@@ -649,7 +647,7 @@
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;
 	}
-	.prose :global(:where(p, li) > code) {
+	.prose :global(:where(p, li, td) > code) {
 		overflow-wrap: anywhere;
 	}
 	.prose :global(.code-block) {
@@ -783,23 +781,7 @@
 		margin-bottom: 0;
 	}
 
-	/* Formulas */
-	.prose :global(.katex) {
-		font-size: 1.08em;
-	}
-	.prose :global(.katex *) {
-		border-color: currentColor;
-	}
-	.prose :global(.math-block) {
-		overflow-x: auto;
-		overflow-y: hidden;
-		padding: 2px 0;
-	}
-	.prose :global(.katex-display) {
-		margin: 0;
-	}
-
-	/* Figures and diagrams */
+	/* Figures */
 	.prose :global(figure img) {
 		display: block;
 		max-width: 100%;
@@ -819,20 +801,6 @@
 	}
 	.prose :global(figcaption p) {
 		margin: 0;
-	}
-	/* Diagrams fit the column, as on the old docs; on a phone a wide one gets
-	   small, and pinch zoom shows its detail */
-	.prose :global(.diagram) {
-		padding: 12px;
-		border: 1px solid rgba(32, 34, 33, 0.3);
-		border-radius: 15px;
-	}
-	.prose :global(.diagram svg) {
-		display: block;
-		width: var(--diagram-width, 100%);
-		max-width: 100%;
-		height: auto;
-		margin: 0 auto;
 	}
 
 	/* {% tabs %}, {% content-ref %} and {% embed %} */
@@ -887,9 +855,6 @@
 		}
 		.prose :global(.callout) {
 			padding: 16px 20px;
-		}
-		.prose :global(.diagram) {
-			padding: 20px;
 		}
 	}
 
