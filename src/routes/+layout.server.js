@@ -4,7 +4,10 @@ import { error, redirect } from '@sveltejs/kit'
 export function load({ request, url }) {
 	if (
 		url.pathname !== '/' &&
-		url.pathname !== '/compliance'
+		url.pathname !== '/compliance' &&
+		// the docs route sends unknown /docs/... addresses to /docs itself
+		url.pathname !== '/docs' &&
+		!url.pathname.startsWith('/docs/')
 		// url.pathname !== '/litepaper' &&
 		// url.pathname !== '/manifesto' &&
 		// url.pathname !== '/spin' &&

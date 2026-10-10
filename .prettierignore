@@ -2,3 +2,6 @@
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Docs sources keep their GitBook markdown as is
+src/lib/docs/content

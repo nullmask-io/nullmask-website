@@ -35,11 +35,14 @@
 		thumbnail: '/thumbnail.webp'
 	}
 
-	// Plain document pages: they set their own title, description and share
-	// tags, and render on the server without waiting for the intro animation,
-	// so their text is in the HTML for anyone fetching the page
-	const DOCUMENT_PAGES = ['/compliance']
-	$: isDocumentPage = DOCUMENT_PAGES.includes($page.url.pathname)
+	// Plain document pages (/compliance and the docs under /docs): they set
+	// their own title, description and share tags, and render on the server
+	// without waiting for the intro animation, so their text is in the HTML for
+	// anyone fetching the page
+	const DOCUMENT_PAGES = ['/compliance', '/docs']
+	$: isDocumentPage = DOCUMENT_PAGES.some(
+		(path) => $page.url.pathname === path || $page.url.pathname.startsWith(`${path}/`)
+	)
 
 	gsap.registerPlugin(ScrollTrigger, MorphSVGPlugin, ScrollSmoother)
 
