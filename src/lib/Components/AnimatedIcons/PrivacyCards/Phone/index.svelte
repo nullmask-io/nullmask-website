@@ -183,7 +183,7 @@
 		class="relative my-8 w-fit px-4 text-2xl leading-[1] lg:px-3 lg:text-xl xl:mt-8 xl:px-4 xl:text-2xl"
 	>
 		<div bind:this={text1Ref} class="text-dark w-full font-medium">
-			Runs invisibly in the background.
+			Runs quietly in the background.
 		</div>
 		<div
 			bind:this={text2Ref}
